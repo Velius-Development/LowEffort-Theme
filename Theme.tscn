@@ -1,0 +1,118 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://assets/bg.png" type="Texture" id=2]
+[ext_resource path="res://text_box/text_box.tscn" type="PackedScene" id=3]
+[ext_resource path="res://buttons/menu_button/menu_button.tscn" type="PackedScene" id=4]
+[ext_resource path="res://buttons/backpack_button/backpack_button.tscn" type="PackedScene" id=6]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Control
+
+# Manages the whole game loop of the theme
+
+# Onready variables
+
+onready var textBox = $TextBox
+onready var nameBar = $TextBox/NameBar
+onready var imageFrame = $ImageFrame
+
+# Functions
+
+
+
+# Velius Engine events
+
+func _ready():
+	Velius.connect(\"new_dialogue\", self, \"_on_new_dialogue\")
+	$BackpackButton.connect(\"pressed\", self, \"_on_BackpackButton_pressed\")
+	$MenuButton.connect(\"pressed\", self, \"_on_MenuButton_pressed\")
+
+func _on_new_dialogue(data : Dictionary):
+	textBox.setText(data.text)
+	nameBar.updateName(data.tellerName)
+	imageFrame.setTex(data.image)
+	
+	for child in $VBoxContainer.get_children():
+		child.queue_free()
+	
+	# If there are any choices, show them
+	if data.has(\"choices\"):
+		for choice in data.choices:
+			var btn = load(\"res://buttons/selection_button/selection_button.tscn\").instance()
+			btn.choice_id = choice
+			btn.set_text(data.choices[choice].title + \": \" + data.choices[choice].description)
+			$VBoxContainer.add_child(btn)
+	else:
+		pass #set_next(current_node.next) wait for input...
+
+# Godot Engine Events
+
+func _on_MenuButton_pressed():
+	Velius.open_side_menu()
+
+func _on_BackpackButton_pressed():
+	print(\"open backpack\")
+"
+
+[sub_resource type="GDScript" id=2]
+script/source = "extends TextureRect
+
+
+func setTex(path):
+	texture = Velius.png_to_tex(path)
+"
+
+[node name="DialogueView" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+script = SubResource( 1 )
+
+[node name="BG" type="Sprite" parent="."]
+scale = Vector2( 1.28933, 1.28933 )
+texture = ExtResource( 2 )
+centered = false
+
+[node name="ImageFrame" type="TextureRect" parent="."]
+light_mask = 4096
+anchor_right = 1.0
+margin_left = 47.0
+margin_top = 248.0
+margin_right = -33.0
+margin_bottom = 1083.0
+mouse_filter = 2
+stretch_mode = 6
+script = SubResource( 2 )
+
+[node name="TextBox" parent="." instance=ExtResource( 3 )]
+anchor_right = 1.0
+margin_left = 58.0
+margin_top = 1165.0
+margin_right = -73.0
+margin_bottom = 1609.0
+
+[node name="MenuButton" parent="." instance=ExtResource( 4 )]
+margin_left = 123.0
+margin_top = -8.0
+margin_right = 379.0
+margin_bottom = 247.0
+mouse_default_cursor_shape = 0
+
+[node name="BackpackButton" parent="." instance=ExtResource( 6 )]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -306.0
+margin_top = -11.0
+margin_right = -50.0
+margin_bottom = 244.0
+mouse_filter = 2
+mouse_default_cursor_shape = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 98.0
+margin_top = -859.0
+margin_right = -64.0
+margin_bottom = -73.0

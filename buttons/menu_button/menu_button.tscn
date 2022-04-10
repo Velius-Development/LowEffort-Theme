@@ -1,0 +1,67 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://fonts/button_label.tres" type="DynamicFont" id=1]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Control
+
+signal pressed
+
+func _on_Area2D_input_event(viewport, event, shape_idx):
+	if Input.is_action_just_pressed(\"click\"):
+		$AnimationPlayer.play(\"clicked\")
+		emit_signal(\"pressed\")
+"
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 236.441, 103.368 )
+
+[sub_resource type="Animation" id=3]
+length = 0.3
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:rect_scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.3 ),
+"transitions": PoolRealArray( -2, -2, -2 ),
+"update": 0,
+"values": [ Vector2( 1, 1 ), Vector2( 0.9, 0.9 ), Vector2( 1, 1 ) ]
+}
+
+[node name="MenuButton" type="Control"]
+margin_left = -128.0
+margin_top = -128.0
+margin_right = 128.0
+margin_bottom = 127.0
+grow_horizontal = 2
+grow_vertical = 2
+rect_pivot_offset = Vector2( 127.229, 126.594 )
+mouse_filter = 2
+mouse_default_cursor_shape = 2
+script = SubResource( 1 )
+
+[node name="Label" type="Label" parent="."]
+anchor_left = 0.512
+anchor_top = 0.496
+anchor_right = 0.512
+anchor_bottom = 0.496
+margin_left = -233.072
+margin_top = -92.48
+margin_right = 234.928
+margin_bottom = 83.52
+custom_fonts/font = ExtResource( 1 )
+text = "MENU"
+
+[node name="Area2D" type="Area2D" parent="."]
+position = Vector2( 127.441, 127.632 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource( 2 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/clicked = SubResource( 3 )
+
+[connection signal="input_event" from="Area2D" to="." method="_on_Area2D_input_event"]

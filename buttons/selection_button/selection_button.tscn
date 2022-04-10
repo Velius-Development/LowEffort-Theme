@@ -1,0 +1,56 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://fonts/button_label.tres" type="DynamicFont" id=1]
+[ext_resource path="res://fonts/data/VCR_OSD_MONO_1.001.ttf" type="DynamicFontData" id=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Button
+
+
+var choice_id : int
+
+func _on_SelectionButton_pressed():
+	Velius.choice_made(choice_id)
+
+func set_text(text):
+	$MarginContainer/ScrollContainer/RichTextLabel.text = text
+"
+
+[sub_resource type="DynamicFont" id=2]
+size = 100
+font_data = ExtResource( 2 )
+
+[node name="SelectionButton" type="Button"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_right = 7.0
+rect_clip_content = true
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_fonts/font = ExtResource( 1 )
+script = SubResource( 1 )
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 100.0
+margin_top = 100.0
+margin_right = -100.0
+margin_bottom = -100.0
+mouse_filter = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer"]
+margin_right = 1247.0
+margin_bottom = 2168.0
+mouse_filter = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="MarginContainer/ScrollContainer"]
+margin_right = 1247.0
+margin_bottom = 2168.0
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_fonts/normal_font = SubResource( 2 )
+fit_content_height = true
+
+[connection signal="pressed" from="." to="." method="_on_SelectionButton_pressed"]
